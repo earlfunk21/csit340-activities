@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Task, { TaskType } from "@/components/task";
 import {
 	Card,
@@ -7,8 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import Duration from "./duration";
 
 type Props = {
 	title: string;
@@ -16,48 +15,7 @@ type Props = {
 	removeTask: () => void;
 };
 
-const useCountDown = (
-	initialCount: number, removeTask: () => void
-): [number, (number: number) => void] => {
-	const [count, setCount] = useState(initialCount);
-
-	useEffect(() => {
-		let timer: NodeJS.Timeout | null = null;
-
-		if (count > 0) {
-			timer = setInterval(() => {
-				setCount((prevCount) => prevCount - 1);
-			}, 1000);
-		}
-
-    if(count <= 0){
-      removeTask()
-    }
-
-		return () => {
-			if (timer) {
-				clearInterval(timer);
-			}
-		};
-	}, [count]);
-
-	const changeCount = (number: number) => {
-		setCount(number);
-	};
-
-	return [count, changeCount];
-};
-
 function Queue({ title, tasks, removeTask }: Props) {
-	const [count, changeCount] = useCountDown(0, removeTask);
-
-
-  React.useEffect(() => {
-    if(tasks.length > 0){
-      changeCount(10);
-    }
-  }, [tasks])
-
 	return (
 		<Card>
 			<CardHeader>
@@ -78,13 +36,13 @@ function Queue({ title, tasks, removeTask }: Props) {
 			</CardContent>
 			<CardFooter className="flex flex-col items-start">
 				<div className="text-2xl">Duration</div>
-				<Progress
-					value={count * 10}
-					className={cn("h-8")}
+				<Duration
+					run={tasks.length > 0}
+					removeTask={removeTask}
 				/>
 			</CardFooter>
 		</Card>
 	);
 }
 
-export default Queue;
+export default React.memo(Queue);
