@@ -1,29 +1,25 @@
 import React from "react";
 
-export const useCountDown = (
-	initialCount: number
-): [number, (number: number) => void] => {
-	const [count, setCount] = React.useState(initialCount);
+export const useCountDown = (run: boolean, length: number): [number] => {
+	const [count, setCount] = React.useState(0);
+
+  React.useEffect(() => {
+		if (run && count === 0) setCount(length);
+	}, [run]);
 
 	React.useEffect(() => {
-		let timer: NodeJS.Timeout | null = null;
 
-		if (count > 0) {
-			timer = setInterval(() => {
-				setCount((prevCount) => prevCount - 1);
+		if (run) {
+			const timer = setInterval(() => {
+				if (count !== 0) setCount((prevCount) => prevCount - 1);
+        else setCount(length);
 			}, 1000);
-		}
 
-		return () => {
-			if (timer) {
+			return () => {
 				clearInterval(timer);
-			}
-		};
-	}, [count]);
+			};
+		}
+	}, [run, count]);
 
-	const changeCount = (number: number) => {
-		setCount(number);
-	};
-
-	return [count, changeCount];
+	return [count];
 };

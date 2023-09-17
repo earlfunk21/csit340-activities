@@ -16,6 +16,9 @@ type Props = {
 };
 
 function Queue({ title, tasks, removeTask }: Props) {
+
+  const run = React.useMemo(() => tasks.length > 0, [tasks]);
+
 	return (
 		<Card>
 			<CardHeader>
@@ -23,7 +26,7 @@ function Queue({ title, tasks, removeTask }: Props) {
 			</CardHeader>
 			<CardContent>
 				<div className="text-2xl">Queue List</div>
-				<div className="flex flex-wrap gap-2 h-4">
+				<div className="flex gap-2">
 					{tasks.map((task, index) => (
 						<Task
 							key={index}
@@ -37,7 +40,7 @@ function Queue({ title, tasks, removeTask }: Props) {
 			<CardFooter className="flex flex-col items-start">
 				<div className="text-2xl">Duration</div>
 				<Duration
-					run={tasks.length > 0}
+					run={run}
 					removeTask={removeTask}
 				/>
 			</CardFooter>

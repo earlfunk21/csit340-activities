@@ -36,22 +36,22 @@ export const taskReducer = (state: any, action: any) => {
     case REMOVE_HIGH_PRIO_QUEUE:
 			return {
 				...state,
-				highPrio: [],
+				highPrio: state.highPrio.slice(1),
 			};
 		case REMOVE_RANDOM_QUEUE_1:
 			return {
 				...state,
-				queue1: [],
+				queue1: state.queue1.slice(1),
 			};
 		case REMOVE_RANDOM_QUEUE_2:
 			return {
 				...state,
-				queue2: [],
+				queue2: state.queue2.slice(2),
 			};
 		case REMOVE_RANDOM_QUEUE_3:
 			return {
 				...state,
-				queue3: [],
+				queue3: state.queue3.slice(3),
 			};
 	}
 };
