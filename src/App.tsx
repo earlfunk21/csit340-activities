@@ -26,7 +26,6 @@ function App() {
 			const interval = setInterval(() => {
 				random = Math.floor(Math.random() * 8) + 1;
 				setNumber(random);
-        console.log(random)
 			}, 100);
 
 			return () => {
