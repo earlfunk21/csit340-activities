@@ -57,12 +57,16 @@
 .Boxes {
 	display: grid;
 	grid-template-columns: 200px 200px 200px;
-	gap: 5px;
+	row-gap: 10px;
+  column-gap: 100px;
+  margin-top: 40px;
 }
 
 .Box {
 	width: 200px;
 	height: 200px;
+  border-top-right-radius: 100%;
+  rotate: 135deg;
 }
 
 .btnRoll {
