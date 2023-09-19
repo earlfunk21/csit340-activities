@@ -24,8 +24,9 @@ function App() {
 		let random: number;
 		if (isRolling) {
 			const interval = setInterval(() => {
-				random = Math.floor(Math.random() * 9) + 1;
+				random = Math.floor(Math.random() * 8) + 1;
 				setNumber(random);
+        console.log(random)
 			}, 100);
 
 			return () => {
