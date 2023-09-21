@@ -4,13 +4,11 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "./components/ui/card";
 import Task, { TaskType } from "./components/task";
 import Queue from "./components/queue";
-import { cn } from "@/lib/utils";
 import { taskReducer, ACTION } from "./reducers/task";
 
 function App() {
@@ -67,6 +65,12 @@ function App() {
 					<CardDescription>Add tasks to the queue</CardDescription>
 				</CardHeader>
 				<CardContent>
+					<Button
+						className="bg-blue-400 mb-5"
+						disabled={state.tasks.length <= 0}
+						onClick={handleAdmitTask}>
+						ADMIT TASKS
+					</Button>
 					<div className="flex gap-5 flex-wrap">
 						{state.tasks.map((task: TaskType, index: number) => (
 							<Task
@@ -77,14 +81,6 @@ function App() {
 						))}
 					</div>
 				</CardContent>
-				<CardFooter>
-					<Button
-						className={cn("bg-blue-400")}
-						disabled={state.tasks.length <= 0}
-						onClick={handleAdmitTask}>
-						ADMIT TASKS
-					</Button>
-				</CardFooter>
 			</Card>
 
 			<div className="flex-flex-col">

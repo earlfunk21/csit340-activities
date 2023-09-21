@@ -17,8 +17,6 @@ type Props = {
 
 function Queue({ title, tasks, removeTask }: Props) {
 
-  const run = React.useMemo(() => tasks.length > 0, [tasks]);
-
 	return (
 		<Card>
 			<CardHeader>
@@ -40,7 +38,7 @@ function Queue({ title, tasks, removeTask }: Props) {
 			<CardFooter className="flex flex-col items-start">
 				<div className="text-2xl">Duration</div>
 				<Duration
-					run={run}
+					tasks={tasks}
 					removeTask={removeTask}
 				/>
 			</CardFooter>

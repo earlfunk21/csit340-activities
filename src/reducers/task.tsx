@@ -18,22 +18,39 @@ export const taskReducer = (state: any, action: any) => {
 				if (removeTask.prio) {
 					return {
 						...state,
-            tasks: updatedTasks,
+						tasks: updatedTasks,
 						highPrio: [...state.highPrio, removeTask],
 					};
 				} else {
-					const queueList = ["queue1", "queue2", "queue3"];
-					const randomNumber = Math.floor(Math.random() * 3);
-					const newQueue = queueList[randomNumber];
+					const queueNames = ["queue1", "queue2", "queue3"];
+					const queueLengths = queueNames.map(
+						(queueName) => state[queueName].length
+					);
+					const minQueueLength = Math.min(...queueLengths);
+
+					const minQueueIndices = queueNames.reduce(
+						(indices: number[], queueName, index) => {
+							if (state[queueName].length === minQueueLength) {
+								indices.push(index);
+							}
+							return indices;
+						},
+						[]
+					);
+
+					const randomNumber =
+						minQueueIndices[Math.floor(Math.random() * minQueueIndices.length)];
+					const newQueueName = queueNames[randomNumber];
+
 					return {
 						...state,
-            tasks: updatedTasks,
-						[newQueue]: [...state[newQueue], removeTask],
+						tasks: updatedTasks,
+						[newQueueName]: [...state[newQueueName], removeTask],
 					};
 				}
 			}
 			return state;
-    case REMOVE_HIGH_PRIO_QUEUE:
+		case REMOVE_HIGH_PRIO_QUEUE:
 			return {
 				...state,
 				highPrio: state.highPrio.slice(1),
@@ -46,16 +63,21 @@ export const taskReducer = (state: any, action: any) => {
 		case REMOVE_RANDOM_QUEUE_2:
 			return {
 				...state,
-				queue2: state.queue2.slice(2),
+				queue2: state.queue2.slice(1),
 			};
 		case REMOVE_RANDOM_QUEUE_3:
 			return {
 				...state,
-				queue3: state.queue3.slice(3),
+				queue3: state.queue3.slice(1),
 			};
 	}
 };
 
-
-export const ACTION = {ADD_TASK, ADMIT_TASK, REMOVE_HIGH_PRIO_QUEUE, REMOVE_RANDOM_QUEUE_1, REMOVE_RANDOM_QUEUE_2, REMOVE_RANDOM_QUEUE_3};
-
+export const ACTION = {
+	ADD_TASK,
+	ADMIT_TASK,
+	REMOVE_HIGH_PRIO_QUEUE,
+	REMOVE_RANDOM_QUEUE_1,
+	REMOVE_RANDOM_QUEUE_2,
+	REMOVE_RANDOM_QUEUE_3,
+};

@@ -1,25 +1,26 @@
+import { TaskType } from "@/components/task";
 import React from "react";
 
-export const useCountDown = (run: boolean, length: number): [number] => {
+export const useCountDown = (tasks: TaskType[], length: number): [number] => {
 	const [count, setCount] = React.useState(0);
 
   React.useEffect(() => {
-		if (run && count === 0) setCount(length);
-	}, [run]);
+		if (tasks.length > 0 && count === 0) setCount(prev => prev + length);
+	}, [tasks]);
 
 	React.useEffect(() => {
 
-		if (run) {
+		if (tasks.length > 0 && count > 0) {
 			const timer = setInterval(() => {
 				if (count !== 0) setCount((prevCount) => prevCount - 1);
-        else setCount(length);
-			}, 1000);
+        else setCount(prev => prev + length);
+			}, tasks[0].number);
 
 			return () => {
 				clearInterval(timer);
 			};
 		}
-	}, [run, count]);
+	}, [tasks, count]);
 
 	return [count];
 };

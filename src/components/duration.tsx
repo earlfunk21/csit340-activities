@@ -3,24 +3,25 @@ import React from "react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useCountDown } from "@/hooks/useCountDown";
+import { TaskType } from "./task";
 
 type Props = {
-	run: boolean;
+	tasks: TaskType[];
 	removeTask: VoidFunction;
 };
 
-function Duration({ run, removeTask }: Props) {
-	const [count] = useCountDown(run, 10);
+function Duration({ tasks, removeTask }: Props) {
+	const [count] = useCountDown(tasks, 100);
 
 	React.useEffect(() => {
-		if (count === 0 && run) {
+		if (count === 0 && tasks.length > 0) {
 			removeTask();
 		}
 	}, [count]);
 
 	return (
 		<Progress
-			value={count * 10}
+			value={count}
 			className={cn("h-8 max-w-[200px]")}
 		/>
 	);
