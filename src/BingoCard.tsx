@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button } from "./components/ui/button";
 import { Dialog, DialogTrigger, DialogContent } from "./components/ui/dialog";
@@ -28,10 +28,7 @@ const BingoCard = () => {
 	});
 	const [token, setToken] = useState("");
 	const [check, setCheck] = useState(false);
-
-	const newCard = () => {
-		window.location.reload();
-	};
+  const [reloader, setRelaoder] = useState(false)
 
 	const checkCard = async () => {
 		axios
@@ -60,7 +57,11 @@ const BingoCard = () => {
 				});
 		};
 		getCard();
-	}, []);
+	}, [reloader]);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.currentTarget.disabled = true;
+  };
 
 	return (
 		<div className="flex min-h-screen flex-col items-center p-24 gap-y-10">
@@ -75,31 +76,31 @@ const BingoCard = () => {
 				<div className="flex gap-y-4 items-center flex-col">
 					B
 					{card.B.map((num, key) => (
-						<Button key={key}>{num}</Button>
+						<Button key={key} onClick={handleClick}>{num}</Button>
 					))}
 				</div>
 				<div className="flex gap-y-4 items-center flex-col">
 					I
 					{card.I.map((num, key) => (
-						<Button key={key}>{num}</Button>
+						<Button key={key} onClick={handleClick}>{num}</Button>
 					))}
 				</div>
 				<div className="flex gap-y-4 items-center flex-col">
 					N
 					{card.N.map((num, key) => (
-						<Button key={key}>{num}</Button>
+						<Button key={key} onClick={handleClick}>{num}</Button>
 					))}
 				</div>
 				<div className="flex gap-y-4 items-center flex-col">
 					G
 					{card.B.map((num, key) => (
-						<Button key={key}>{num}</Button>
+						<Button key={key} onClick={handleClick}>{num}</Button>
 					))}
 				</div>
 				<div className="flex gap-y-4 items-center flex-col">
 					O
 					{card.B.map((num, key) => (
-						<Button key={key}>{num}</Button>
+						<Button key={key} onClick={handleClick}>{num}</Button>
 					))}
 				</div>
 			</div>
@@ -113,7 +114,7 @@ const BingoCard = () => {
 						<div>{check ? <h1>BINGO!</h1> : <h1>Not yet BINGO</h1>}</div>
 					</DialogContent>
 				</Dialog>
-				<Button onClick={newCard}>New Card</Button>
+				<Button onClick={() => setRelaoder(prev => !prev)}>New Card</Button>
 			</div>
 		</div>
 	);
