@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
 	Card,
 	CardContent,
@@ -17,7 +17,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "./components/ui/form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { PostType } from "./types";
 import PostCard from "./components/PostCard";
 import {
@@ -31,6 +31,9 @@ import { Avatar, AvatarImage } from "./components/ui/avatar";
 import { ModeToggle } from "./components/mode-toggle";
 import { Skeleton } from "./components/ui/skeleton";
 import { toast } from "./components/ui/use-toast";
+import logoWhite from "@/assets/settings-white.png";
+import logoRose from "@/assets/settings-rose.png";
+import useTheme from "./lib/hooks/useTheme";
 
 const PostFormSchema = z.object({
 	post: z.string(),
@@ -39,16 +42,15 @@ const PostFormSchema = z.object({
 function App() {
 	const [posts, setPosts] = useState<PostType[]>([]);
 	const [page, setPage] = useState(1);
-	const { user, onLogout } = useAuth();
-	const navigate = useNavigate();
+	const { user, onLogout, isLoading } = useAuth();
 	const postForm = useForm<z.infer<typeof PostFormSchema>>({
 		resolver: zodResolver(PostFormSchema),
 	});
-	const [isLoading, setIsLoading] = useState(false);
-	const [focus, setFocus] = useState(false);
+	const [isFetching, setIsFetching] = useState(false);
+	const { theme } = useTheme();
 
-	useEffect(() => {
-		setIsLoading(true);
+	const fetchPosts = useCallback(() => {
+		setIsFetching(true);
 		axios
 			.get(`http://hyeumine.com/forumGetPosts.php?page=${page}`)
 			.then(response => {
@@ -65,8 +67,12 @@ function App() {
 				});
 			})
 			.finally(() => {
-				setIsLoading(false);
+				setIsFetching(false);
 			});
+	}, []);
+
+	useEffect(() => {
+		fetchPosts();
 	}, [page]);
 
 	const addNewPost = (data: z.infer<typeof PostFormSchema>) => {
@@ -87,7 +93,7 @@ function App() {
 				if (!(response.status === 200 && response.statusText === "OK")) {
 					throw new Error("Network response was not ok");
 				}
-				navigate(0);
+				fetchPosts();
 			})
 			.catch(error => {
 				toast({
@@ -95,13 +101,36 @@ function App() {
 					title: "There was a problem with the fetch operation",
 					description: error,
 				});
+			})
+			.finally(() => {
+				postForm.reset({ post: "" });
 			});
 	};
+
+	if (isLoading) {
+		return (
+			<div className="min-h-screen flex justify-center items-center">
+				{theme === "dark" ? (
+					<img
+						src={logoWhite}
+						alt="loading..."
+						className="animate-spin"
+					/>
+				) : (
+					<img
+						src={logoRose}
+						alt="loading..."
+						className="animate-spin"
+					/>
+				)}
+			</div>
+		);
+	}
 
 	return (
 		<div className="min-h-screen flex">
 			<div className="container flex flex-col gap-y-5 max-w-[700px] pt-4">
-				{user ? (
+				{user.isAuthenticated ? (
 					<>
 						<div className="flex justify-end space-x-4">
 							<ModeToggle />
@@ -109,12 +138,12 @@ function App() {
 								<DropdownMenuTrigger asChild>
 									<Avatar className="cursor-pointer">
 										<AvatarImage
-											src={`https://ui-avatars.com/api/?background=random&name=${user.username}`}
+											src={`https://ui-avatars.com/api/?background=random&name=${user?.username}`}
 										/>
 									</Avatar>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent>
-									<DropdownMenuLabel>{user.username}</DropdownMenuLabel>
+									<DropdownMenuLabel>{user?.username}</DropdownMenuLabel>
 									<Separator />
 									<DropdownMenuItem
 										className="cursor-pointer hover:opacity-70"
@@ -143,10 +172,8 @@ function App() {
 														<Textarea
 															placeholder="Say Something..."
 															{...field}
-															rows={focus ? 10 : 3}
+															rows={10}
 															className="focus-visible:ring-rose-500 transition-all ease-in-out duration-300"
-															onFocus={() => setFocus(true)}
-															onBlur={() => setFocus(false)}
 														/>
 													</FormControl>
 												</FormItem>
@@ -187,7 +214,7 @@ function App() {
 					</Button>
 				</div>
 
-				{isLoading ? (
+				{isFetching ? (
 					<Card>
 						<CardHeader>
 							<div className="flex space-x-2">
@@ -205,7 +232,13 @@ function App() {
 						</CardContent>
 					</Card>
 				) : (
-					posts.map(post => <PostCard post={post} key={post.id} />)
+					posts.map(post => (
+						<PostCard
+							fetchPosts={fetchPosts}
+							post={post}
+							key={post.id}
+						/>
+					))
 				)}
 			</div>
 		</div>

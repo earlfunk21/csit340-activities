@@ -14,7 +14,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import axios from "axios";
 import useAuth from "@/lib/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -26,18 +25,18 @@ import { Avatar, AvatarImage } from "./ui/avatar";
 
 type Props = {
 	post: PostType;
+  fetchPosts: () => void
 };
 
 const formSchema = z.object({
 	reply: z.string(),
 });
 
-function PostCard({ post }: Props) {
+function PostCard({ post, fetchPosts }: Props) {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 	});
 	const { user } = useAuth();
-	const navigate = useNavigate();
 
 	function onSubmit(data: z.infer<typeof formSchema>) {
 		axios
@@ -58,7 +57,7 @@ function PostCard({ post }: Props) {
 				if (!(response.status === 200 && response.statusText === "OK")) {
 					throw new Error("Network response was not ok");
 				}
-				navigate(0);
+				fetchPosts();
 			})
 			.catch(error => {
 				console.error("There was a problem with the fetch operation:", error);
@@ -76,7 +75,7 @@ function PostCard({ post }: Props) {
 				if (!(response.status === 200 && response.statusText === "OK")) {
 					throw new Error("Network response was not ok");
 				}
-				navigate(0);
+				fetchPosts();
 			})
 			.catch(error => {
 				console.error("There was a problem with the fetch operation:", error);
@@ -149,7 +148,7 @@ function PostCard({ post }: Props) {
 											<FormItem className="w-full flex space-x-2">
 												<Avatar className="cursor-pointer mt-2">
 													<AvatarImage
-														src={`https://ui-avatars.com/api/?background=random&name=${post.user}`}
+														src={`https://ui-avatars.com/api/?background=random&name=${user?.username}`}
 													/>
 												</Avatar>
 												<FormControl>
@@ -182,6 +181,7 @@ function PostCard({ post }: Props) {
 							{post.reply &&
 								post.reply.map(reply => (
 									<ReplyCard
+                    fetchPosts={fetchPosts}
 										reply={reply}
 										key={reply.id}
 									/>

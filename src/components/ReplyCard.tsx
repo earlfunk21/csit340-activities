@@ -10,16 +10,15 @@ import useAuth from "@/lib/hooks/useAuth";
 import { Button } from "./ui/button";
 import { MoreVertical, Trash2 } from "lucide-react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarImage } from "./ui/avatar";
 
 type Props = {
 	reply: ReplyType;
+  fetchPosts: () => void;
 };
 
-function ReplyCard({ reply }: Props) {
+function ReplyCard({ reply, fetchPosts }: Props) {
 	const { user } = useAuth();
-	const navigate = useNavigate();
 
 	function deleteReply() {
 		axios
@@ -32,7 +31,7 @@ function ReplyCard({ reply }: Props) {
 				if (!(response.status === 200 && response.statusText === "OK")) {
 					throw new Error("Network response was not ok");
 				}
-				navigate(0);
+				fetchPosts();
 			})
 			.catch(error => {
 				console.error("There was a problem with the fetch operation:", error);
