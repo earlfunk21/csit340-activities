@@ -62,9 +62,44 @@ const PostCard = ({ post, user, fetchPosts }) => {
 					borderRadius: "10px",
 				}}>
 				<Stack spacing={3}>
-					<Stack
-						direction="row"
-						justifyContent="space-between">
+					<Stack spacing={2}>
+						<Stack
+							direction="row"
+							justifyContent="space-between"
+              alignItems="center">
+							<Typography color="grey.500" variant="body1" fontStyle="italic">{post.date}</Typography>
+
+							{post.user === user.username && (
+								<IconButton
+									aria-label="delete"
+									onClick={handleClick}>
+									<InfoOutlinedIcon />
+								</IconButton>
+							)}
+
+							<Popover
+								id={id}
+								open={open}
+								anchorEl={anchorEl}
+								onClose={handleClose}
+								anchorOrigin={{
+									vertical: "bottom",
+									horizontal: "center",
+								}}
+								transformOrigin={{
+									vertical: "top",
+									horizontal: "right",
+								}}>
+								<Button
+									color="error"
+									variant="outlined"
+									startIcon={<DeleteIcon />}
+									onClick={removePost}>
+									Delete
+								</Button>
+							</Popover>
+						</Stack>
+
 						<Stack
 							direction="row"
 							spacing={1}
@@ -75,35 +110,6 @@ const PostCard = ({ post, user, fetchPosts }) => {
 							/>
 							<Typography variant="subtitle2">{post.user}</Typography>
 						</Stack>
-						{post.user === user.username && (
-							<IconButton
-								aria-label="delete"
-								onClick={handleClick}>
-								<InfoOutlinedIcon />
-							</IconButton>
-						)}
-
-						<Popover
-							id={id}
-							open={open}
-							anchorEl={anchorEl}
-							onClose={handleClose}
-							anchorOrigin={{
-								vertical: "bottom",
-								horizontal: "center",
-							}}
-							transformOrigin={{
-								vertical: "top",
-								horizontal: "right",
-							}}>
-							<Button
-								color="error"
-								variant="outlined"
-								startIcon={<DeleteIcon />}
-								onClick={removePost}>
-								Delete
-							</Button>
-						</Popover>
 					</Stack>
 
 					<Typography
@@ -205,6 +211,7 @@ PostCard.propTypes = {
 		id: PropTypes.string.isRequired,
 		user: PropTypes.string.isRequired,
 		post: PropTypes.string.isRequired,
+		date: PropTypes.string.isRequired,
 		reply: PropTypes.arrayOf(
 			PropTypes.shape({
 				id: PropTypes.string,
