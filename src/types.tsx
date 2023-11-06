@@ -13,4 +13,6 @@ export type LyricsType = {
 export type LyricsContextType = {
   lyrics: LyricsType[];
   addLyrics: (lyrics: LyricsType) => void;
+  setLyricsValue: (lyrics: string) => void;
+  lyricsValue: string;
 }
